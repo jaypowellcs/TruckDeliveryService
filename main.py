@@ -164,14 +164,13 @@ def deliverPackages(truck):
     #print("Truck 1 has delivered all their packages")
 
 def hashTablePrint(packageHashTable):
-    print("Packages:")
+    print('Packages:')
     # Fetch data from Hash Table
-    for i in range(len(packageHashTable.table) + 1):
+    for i in range(1,len(packageHashTable.table) + 1):
         print("Packages: {}".format(packageHashTable.search(i)))  # 1 to 11 is sent to myHash.search()
 
 def hashTableSingleSearch(packageHashTable, packageID):
     return packageHashTable.search(packageID)
-
 
 class Main:
     #User Interface
@@ -179,10 +178,9 @@ class Main:
         print("\nWelcome to the WGUPS package delivery program")
         print("Below are some options you can run during the program\n")
         print("***************************************")
-        print("1. Print All Package Status and Total Mileage")
+        print("1. Print All Package Status and Delivery Times")
         print("2. Get a Single Package Status with a Time")
-        print("3. Get All Package Status with a Time")
-        print("4. Exit the Program")
+        print("3. Exit the Program")
         print("***************************************")
 
         # Get Input from user
@@ -199,11 +197,10 @@ class Main:
             userInput = input("Type in the package you want to search for.\n")
             print(hashTableSingleSearch(packageHashTable, int(userInput)))
         elif userInput == '3':
-            hashTablePrint(packageHashTable)
-        elif userInput == '4':
             print("Exiting...")
             break
         else:
             print('Unknown Error')
+            break
 
 

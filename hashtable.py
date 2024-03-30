@@ -3,6 +3,7 @@
 class HashTable:
     # Constructor with optional initial capacity parameter.
     # Assigns all buckets with an empty list.
+    # Citing source: C950 - Webinar-1 - Let’s Go Hashing - Complete Python Code
     def __init__(self, initial_capacity=40):
         # initialize the hash table with empty bucket list entries.
         self.table = []
