@@ -36,7 +36,7 @@ def loadPackageData(fileName):
             pDeadline = package[5]
             pWeight = package[6]
             pSpecial = package[7]
-            pStatus = "Loaded"
+            pStatus = "At the hub"
 
             # package object
             package = Package(pID, pAddress, pCity, pState, pZip, pDeadline, pWeight, pSpecial, pStatus)
