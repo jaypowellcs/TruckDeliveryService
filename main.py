@@ -37,7 +37,7 @@ def find_index_2d(element):
 
 
 # Load Truck 1 packages at 8:00 am - packages  1, 7, 8,  13, 14, 15, 19, 20, 21, 22, 23, 24, 29, 34
-truck1packages = [1, 13]
+truck1packages = [1, 13, 14, 15, 16, 20, 29, 30, 31, 34, 37, 40]
 
 # Load Truck 2 packages at 9:05 am - packages 3, 6, 10, 11, 12, 18, 25, 28, 30, 31, 32, 36, 38
 truck2packages = [3, 6, 12, 17, 18, 19, 21, 22, 23, 24, 26, 27, 35, 36, 38, 39]
@@ -64,6 +64,21 @@ def miles_to_time(distance_miles):
 
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
+def add_times(time1, time2):
+    # Parse the input times
+    hours1, minutes1, seconds1 = map(int, time1.split(":"))
+    hours2, minutes2, seconds2 = map(int, time2.split(":"))
+
+    # Calculate the total seconds
+    total_seconds = (hours1 + hours2) * 3600 + (minutes1 + minutes2) * 60 + seconds1 + seconds2
+
+    # Convert total seconds to HH:mm:ss format
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
 # Load Packages for Truck1
 truck1.packages = truck1packages
 truck2.packages = truck2packages
@@ -82,9 +97,9 @@ def deliverPackages(truck):
         Package.status = 'En Route'
         packageIndexes.append(find_index_2d(Package.address))
 
-    print(packageIndexes)
-    print(distances)
-    print(truck.packages)
+    #print(packageIndexes)
+    #print(distances)
+    #print(truck.packages)
 
     while len(packageIndexes) > 0:
         for i in packageIndexes:
@@ -92,10 +107,10 @@ def deliverPackages(truck):
             dist = distanceBetween(truck.currentLocation, package_address)  # Calculate distance
             distances.append(dist)  # Add distance to the list
 
-        print("222222")
-        print('Package Index', packageIndexes)
-        print('Distances', distances)
-        print('Actually Packages', truck.packages)
+        #print("222222")
+        #print('Package Index', packageIndexes)
+        #print('Distances', distances)
+        #print('Actually Packages', truck.packages)
 
         #print('Distance 0', distances[0])
         #min_distance = distances[0]
@@ -108,52 +123,87 @@ def deliverPackages(truck):
 
         #min distance of package from distance list
         min_distance = min(distances, key=float)
-        print('Min_Distance Found',min_distance)
+        #print('Min_Distance Found',min_distance)
 
         indexOfPackage = packageIndexes[distances.index(min_distance)]
-        print('Package Index',indexOfPackage )
+        #print('Package Index',indexOfPackage )
         packageDelivered = truck.packages[packageIndexes.index(indexOfPackage)]
-        print('Package ID', packageDelivered)
+        #print('Package ID', packageDelivered)
 
 
         #Changing the status of a package from 'En Route' To delivered
-        print('Package Delivered:',packageHashTable.search(packageDelivered))
+        #print('Package Delivered:',packageHashTable.search(packageDelivered))
         Package = packageHashTable.search(packageDelivered)
-        print('Package this is',Package)
+        #print('Package this is',Package)
+
+        #Updating the time of the program
         timeDelivered = miles_to_time(float(min_distance))
-        Package.status = f'Delivered, {timeDelivered}'
-        print('Package Delivered:', packageHashTable.search(packageDelivered))
+        deliveryTime = add_times(truck.time, timeDelivered)
+        truck.time = deliveryTime
+        #print(deliveryTime)
+        Package.status = f'Delivered, {deliveryTime}'
+        #print('Package Delivered:', packageHashTable.search(packageDelivered))
 
         #Find time package delivered
-        print("Time",miles_to_time(float(min_distance)))
+        #print("Time",miles_to_time(float(min_distance)))
         #Add min distance to total truck miles
         truck.miles += float(min_distance)
-        print('Truck Miles', min_distance)
+        #print('Truck Miles', min_distance)
 
         truck.currentLocation = indexOfPackage
-        print('New Truck Current Location', indexOfPackage)
+        #print('New Truck Current Location', indexOfPackage)
         packageIndexes.remove( indexOfPackage)
         truck.packages.remove(packageDelivered)
         distances.clear()
-        print("333333")
-        print('Package Index', packageIndexes)
-        print('Distances', distances)
-        print('Actually Packages', truck.packages)
+        #print("333333")
+        #print('Package Index', packageIndexes)
+        #print('Distances', distances)
+        #print('Actually Packages', truck.packages)
 
-    print('Total Truck Miles',truck.miles)
+    #print('Total Truck Miles',truck.miles)
+    #print("Truck 1 has delivered all their packages")
 
+def hashTablePrint(packageHashTable):
+    print("Packages:")
+    # Fetch data from Hash Table
+    for i in range(len(packageHashTable.table) + 1):
+        print("Packages: {}".format(packageHashTable.search(i)))  # 1 to 11 is sent to myHash.search()
+
+def hashTableSingleSearch(packageHashTable, packageID):
+    return packageHashTable.search(packageID)
 
 
 class Main:
     #User Interface
-    print("Welcome to the WGUPS package delivery program\n")
-    print()
-    #Get Input from user
-    userInput = input("Type in start to begin the delivery process and start the delivery of the first truck.\n")
-    if userInput == 'start':
-        deliverPackages(truck1)
-        print('Total Miles Truck 1 driven:', truck1.miles)
-    else:
-        print('Wrong input, you will need to press start to start the delivery program.')
+    while True:
+        print("\nWelcome to the WGUPS package delivery program")
+        print("Below are some options you can run during the program\n")
+        print("***************************************")
+        print("1. Print All Package Status and Total Mileage")
+        print("2. Get a Single Package Status with a Time")
+        print("3. Get All Package Status with a Time")
+        print("4. Exit the Program")
+        print("***************************************")
+
+        # Get Input from user
+        userInput = input("Type in start to begin the delivery proceess and you can press exit to stop the program at "
+                          "anytime.\n")
+        if userInput == 'start':
+            deliverPackages(truck1)
+            deliverPackages(truck2)
+            deliverPackages(truck3)
+            print(f"Total Miles Driven {truck1.miles + truck2.miles + truck3.miles} ")
+        elif userInput == '1':
+            hashTablePrint(packageHashTable)
+        elif userInput == '2':
+            userInput = input("Type in the package you want to search for.\n")
+            print(hashTableSingleSearch(packageHashTable, int(userInput)))
+        elif userInput == '3':
+            hashTablePrint(packageHashTable)
+        elif userInput == '4':
+            print("Exiting...")
+            break
+        else:
+            print('Unknown Error')
 
 
