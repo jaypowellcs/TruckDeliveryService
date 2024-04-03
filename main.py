@@ -1,6 +1,7 @@
 # James Powell
 # Student ID: 011190422
 # C950 WGUPS
+from typing import List, Any
 
 from truck import Truck
 import csv
@@ -203,7 +204,7 @@ def timeBlock(userInput):
             package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
             if check_string(package.status) == '08':
                 print(
-                    f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline}, '
+                    f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline},'
                     f'Status: {package.status}')
     elif userInput == '2':
         for i in range(1, len(packageHashTable.table) + 1):
@@ -267,11 +268,11 @@ class Main:
               "<--------------Time Slots------------------>\n"
               "\t1. 8:00 am to 9:00 am\n"
               "\t2. 9:00 am to 10:00 am\n"
-              "\t3. 11:00 am to 12:00 pm\n"
-              "\t4. 12:00 pm to 1:00 pm\n"
-              "\t5. 1:00 pm to 2:00 pm\n"
-              "\t6. 2:00 pm to 2:00 pm\n")
-
+              "\t3. 10:00 am to 11:00 am\n"
+              "\t4. 11:00 am to 12:00 pm\n"
+              "\t5. 12:00 pm to 1:00 pm\n"
+              "\t6. 1:00 pm to 2:00 pm\n"
+              "\t7. 2:00 pm to 3:00 pm\n")
         print("5. Exit the Program")
         print("***************************************")
 
