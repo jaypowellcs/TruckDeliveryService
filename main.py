@@ -3,9 +3,10 @@
 # C950 WGUPS
 from typing import List, Any
 
+from hashtable import HashTable
 from truck import Truck
 import csv
-from package import packageHashTable
+from package import packageHashTable, loadPackageData
 
 # Start of program
 # Read the file of distance information
@@ -37,10 +38,12 @@ truck1packages = [1, 13, 14, 15, 16, 20, 29, 30, 31, 34, 37, 40, ]
 # Load Truck 2 packages at 9:05 am - packages 3, 6, 17, 18, 19, 21, 22, 23, 24, 26, 27, 35, 36, 38,  25
 truck2packages = [3, 6, 17, 18, 19, 21, 22, 23, 24, 26, 27, 35, 36, 38, 25]
 
-# Load Truck 3 packages can deliver EOD 2, 4, 5, 7, 8, 9, 10, 11, 28, 32, 33, 39, 12
+# discovered at 10:20 am that package #9 has the wrong address - needs changed to 410 S. State St., Salt Lake City,
+# UT 84111 package9 = packageHashTable.search(9) package9.address = '410 S. State St.' package9.zip = '48111' Load
+# Truck 3 packages can deliver EOD 2, 4, 5, 7, 8, 9, 10, 11, 28, 32, 33, 39, 12
 truck3packages = [2, 4, 5, 7, 8, 9, 10, 11, 28, 32, 33, 39, 12]
 
-# Creation of Trucks with starting time HH:MM:SS
+# Creation of Trucks with starting time HH:MM:SSs
 truck1 = Truck('08:00:00')
 truck2 = Truck('09:05:00')
 truck3 = Truck('12:03:00')
@@ -169,85 +172,54 @@ def deliverPackages(truck):
 # for i in range(1, len(packageHashTable.table) + 1):
 # print("Packages: {}".format(packageHashTable.search(i)))  # 1 to 11 is sent to myHash.search()
 
-# Get all the packages and display their attributes
-def hashTablePrintPackages(packageHashTable):
-    print('Packages:')
-    # Fetch data from Hash Table
-    for i in range(1, len(packageHashTable.table) + 1):
-        package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
-        print(
-            f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline}, Status: {package.status}')
-
-
-# Single Search of the hash table for one package
-def hashTableSingleSearch(packageHashTable, packageID):
-    package = (packageHashTable.search(packageID))
-    print(
-        f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline}, '
-        f'Status: {package.status}')
-
 # checks to see what is the first two numbers after ,
 def check_string(string):
     status = string.split(',')
 
     if len(status) >= 2:
-        characters = status[1].strip()[:2]
+        characters = status[1].strip()[:5]
         return characters
     else:
         return "Error not delivered yet"
 
 
-# Check the times slots of packages to see when they will deliver.
-def timeBlock(userInput):
-    if userInput == '1':
-        for i in range(1, len(packageHashTable.table) + 1):
-            package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
-            if check_string(package.status) == '08':
-                print(
-                    f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline},'
-                    f'Status: {package.status}')
-    elif userInput == '2':
-        for i in range(1, len(packageHashTable.table) + 1):
-            package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
-            if check_string(package.status) == '09':
-                print(
-                    f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline}, '
-                    f'Status: {package.status}')
-    elif userInput == '3':
-        for i in range(1, len(packageHashTable.table) + 1):
-            package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
-            if check_string(package.status) == '10':
-                print(
-                    f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline}, '
-                    f'Status: {package.status}')
-    elif userInput == '4':
-        for i in range(1, len(packageHashTable.table) + 1):
-            package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
-            if check_string(package.status) == '11':
-                print(
-                    f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline},'
-                    f'Status: {package.status}')
-    elif userInput == '5':
-        for i in range(1, len(packageHashTable.table) + 1):
-            package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
-            if check_string(package.status) == '12':
-                print(
-                    f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline}, '
-                    f'Status: {package.status}')
-    elif userInput == '6':
-        for i in range(1, len(packageHashTable.table) + 1):
-            package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
-            if check_string(package.status) == '13':
-                print(
-                    f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline}, '
-                    f'Status: {package.status}')
-    elif userInput == '7':
-        for i in range(1, len(packageHashTable.table) + 1):
-            package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
-            if check_string(package.status) == '14':
-                print(
-                    f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline}, '
-                    f'Status: {package.status}')
+def getTimeForPackages(userInput):
+    print(
+        f'All package statuses as of {userInput}\n')
+    for i in range(1, len(packageHashTable.table) + 1):
+        package = (packageHashTable.search(i))  # 1 to 11 is sent to myHash.search()
+        if check_string(package.status) < userInput:
+            print(
+                f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline},'
+                f'Status: {package.status}')
+        elif check_string(package.status) > userInput:
+            print(
+                f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline},'
+                f'Status: En Route')
+        elif check_string(package.status) == userInput:
+            print(
+                f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline},'
+                f'Status: {package.status}')
+        elif userInput == 'exit':
+            print("Exiting...")
+
+
+def getTimeForSinglePackages(packageID, userInput):
+    print(
+        f'Package statuses as of {userInput}\n')
+    package = (packageHashTable.search(int(packageID)))  # 1 to 11 is sent to myHash.search()
+    if check_string(package.status) < userInput:
+        print(
+            f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline},'
+            f'Status: {package.status}')
+    elif check_string(package.status) > userInput:
+        print(
+            f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline},'
+            f'Status: En Route')
+    elif check_string(package.status) == userInput:
+        print(
+            f'Package ID: {package.packageID}, Delivery Address: {package.address}, Delivery Deadline: {package.deadline},'
+            f'Status: {package.status}')
     elif userInput == 'exit':
         print("Exiting...")
 
@@ -256,53 +228,64 @@ class Main:
     # User Interface
     while True:
         print("\nWelcome to the WGUPS package delivery program")
-        print("Below are some options you can run during the program\n")
-        print("***************************************")
-        print(
-            '1. Print all of the Packages with Package Status, Package Address, Package Deadline, and Package '
-            'Delivery Time')
-        print("2. Get a Single Package with Package Status, Package Address, Package Deadline, and Package Delivery "
-              "Time")
-        print("3. Print the total mileage of all the trucks and see individual miles for each truck")
-        print("4. See what packages will deliver within certain time slots.\n "
-              "<--------------Time Slots------------------>\n"
-              "\t1. 8:00 am to 9:00 am\n"
-              "\t2. 9:00 am to 10:00 am\n"
-              "\t3. 10:00 am to 11:00 am\n"
-              "\t4. 11:00 am to 12:00 pm\n"
-              "\t5. 12:00 pm to 1:00 pm\n"
-              "\t6. 1:00 pm to 2:00 pm\n"
-              "\t7. 2:00 pm to 3:00 pm\n")
-        print("5. Exit the Program")
-        print("***************************************")
-
-        # Get Input from user
         userInput = input("Type in start to begin the delivery process and you can press exit to stop the program at "
                           "anytime.\n")
         if userInput == 'start':
             deliverPackages(truck1)
             deliverPackages(truck2)
-            deliverPackages(truck3)
-            totalMiles = truck1.miles + truck2.miles + truck3.miles
-            print(f"Total Miles Driven: {"%.1f" % totalMiles} miles")
-        elif userInput == '1':
-            hashTablePrintPackages(packageHashTable)
-        elif userInput == '2':
-            userInput = input("Type in the package you want to search for.\n")
-            hashTableSingleSearch(packageHashTable, int(userInput))
-        elif userInput == '3':
-            totalMiles = truck1.miles + truck2.miles + truck3.miles
-            print(f"Total Miles Driven: {"%.1f" % totalMiles} miles")
-            print(f"Truck 1 Miles Driven: {"%.1f" % truck1.miles} miles ")
-            print(f"Truck 2 Miles Driven: {"%.1f" % truck2.miles} miles ")
-            print(f"Truck 3 Miles Driven: {"%.1f" % truck3.miles} miles ")
-        elif userInput == '4':
-            userInput = input("Type in the time slot you want to search for, enter exit to go back to the main "
-                              "program.\n")
-            timeBlock(userInput)
-        elif userInput == '5':
-            print("Exiting...")
-            break
+            # discovered at 10:20 am that package #9 has the wrong address - needs changed to 410 S. State St., Salt Lake City, UT 84111
+            userInput = input("Discovered that package 9 has the incorrect address, do you want to fix? Enter y to "
+                              "fix and n to"
+                              " not fix.\n")
+            if userInput == 'y':
+                package9 = packageHashTable.search(9)
+                package9.address = '410 S. State St.'
+                package9.zip = '48111'
+                deliverPackages(truck3)
+                totalMiles = truck1.miles + truck2.miles + truck3.miles
+            elif userInput == 'n':
+                deliverPackages(truck3)
+                totalMiles = truck1.miles + truck2.miles + truck3.miles
+
+            while True:
+                print("***************************************")
+                print(
+                    '1. Print all of the Packages with Package Status, Package Address, Package Deadline, and Package '
+                    'Delivery Time at a certain time')
+                print(
+                    "2. Get a Single Package with Package Status, Package Address, Package Deadline, and Package "
+                    "Delivery"
+                    " Time at a certain time")
+                print("3. Print the total mileage of all the trucks and see individual miles for each truck")
+                print("4. Exit the Program")
+                print("***************************************\n")
+
+                # Get Input from user
+                userInput = input(
+                    "Select an option.\n")
+                if userInput == '1':
+                    userInput = input(
+                        "Please enter a time to show all packages before, at, and after that time. (Please "
+                        "input in military time hh:mm)\n")
+                    getTimeForPackages(userInput)
+                elif userInput == '2':
+                    packageID = input("Type in the package you want to search for.\n")
+                    userInput = input("Type in the time you want to search for. (Please "
+                                      "input in military time hh:mm)\n")
+                    getTimeForSinglePackages(packageID, userInput)
+                elif userInput == '3':
+                    totalMiles = truck1.miles + truck2.miles + truck3.miles
+                    print(f"Total Miles Driven: {"%.1f" % totalMiles} miles")
+                    print(f"Truck 1 Miles Driven: {"%.1f" % truck1.miles} miles ")
+                    print(f"Truck 2 Miles Driven: {"%.1f" % truck2.miles} miles ")
+                    print(f"Truck 3 Miles Driven: {"%.1f" % truck3.miles} miles ")
+                    print(' \n')
+                elif userInput == '4':
+                    print("Exiting...")
+                    break
+                else:
+                    print('Unknown Error')
+                    break
         else:
             print('Unknown Error')
             break

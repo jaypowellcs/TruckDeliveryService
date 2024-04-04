@@ -46,5 +46,5 @@ def loadPackageData(fileName):
 
 packageHashTable = HashTable()
 
-loadPackageData('packages.csv')
 
+loadPackageData('packages.csv')
